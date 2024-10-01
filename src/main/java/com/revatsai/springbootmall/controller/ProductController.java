@@ -1,5 +1,6 @@
 package com.revatsai.springbootmall.controller;
 
+import com.revatsai.springbootmall.constant.ProductCategory;
 import com.revatsai.springbootmall.dto.ProductRequest;
 import com.revatsai.springbootmall.model.Product;
 import com.revatsai.springbootmall.service.ProductService;
@@ -17,9 +18,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts() {
-        List<Product> productList = productService.getProducts();
+    @GetMapping("/products") // 篩選特定商品分類
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String search
+    ) {
+        List<Product> productList = productService.getProducts(category, search);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
 

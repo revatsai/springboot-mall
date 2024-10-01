@@ -1,5 +1,6 @@
 package com.revatsai.springbootmall.dao.impl;
 
+import com.revatsai.springbootmall.constant.ProductCategory;
 import com.revatsai.springbootmall.dao.ProductDao;
 import com.revatsai.springbootmall.dto.ProductRequest;
 import com.revatsai.springbootmall.model.Product;
@@ -23,12 +24,22 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(ProductCategory category, String search) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, " +
                 "created_date, last_modified_date " +
-                "FROM product";
+                "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>(); // 創建空的map
+
+        if (category != null) {
+            sql += " AND category = :category"; // AND前留空白
+            map.put("category", category.name());
+        } // category是Enum類型，要使用name方法，Enum -> String
+
+        if (search != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search", "%" + search + "%"); // 這樣子LIKE的模糊查詢才會生效
+        }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         return productList;
