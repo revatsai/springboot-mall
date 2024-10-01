@@ -1,6 +1,6 @@
 package com.revatsai.springbootmall.service;
 
-import com.revatsai.springbootmall.constant.ProductCategory;
+import com.revatsai.springbootmall.dto.ProductQueryParams;
 import com.revatsai.springbootmall.dto.ProductRequest;
 import com.revatsai.springbootmall.model.Product;
 
@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<Product> getProducts(ProductCategory category, String search);
+//    List<Product> getProducts(ProductCategory category, String search);
+    List<Product> getProducts(ProductQueryParams productQueryParams);
     // 根據productId取得商品數據
     Product getProductById(Integer productId);
 
