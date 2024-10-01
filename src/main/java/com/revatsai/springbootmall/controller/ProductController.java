@@ -34,4 +34,21 @@ public class ProductController {
         Product product = productService.getProductById(productId); // 從資料庫取得商品的數據出來
         return ResponseEntity.status(HttpStatus.CREATED).body(product); // 把創建的商品數據放在body回傳給前端
     }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+        //  檢查product是存在
+        Product product = productService.getProductById(productId);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // 修改商品的數據
+        productService.updateProduct(productId, productRequest);
+
+        Product updateProduct = productService.getProductById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
+
+    }
 }
