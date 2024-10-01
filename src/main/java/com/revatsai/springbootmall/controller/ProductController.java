@@ -16,7 +16,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable Integer productId){
+    public ResponseEntity<Product> getProductById(@PathVariable Integer productId) {
 
         Product product = productService.getProductById(productId);
 
@@ -28,7 +28,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest){
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
         Integer productId = productService.createProduct(productRequest);
 
         Product product = productService.getProductById(productId); // 從資料庫取得商品的數據出來
@@ -49,6 +49,11 @@ public class ProductController {
 
         Product updateProduct = productService.getProductById(productId);
         return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
+    }
 
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
+        productService.deleteProductById(productId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 表示數據已經被刪掉了
     }
 }
