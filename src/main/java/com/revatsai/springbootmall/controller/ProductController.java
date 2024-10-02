@@ -6,13 +6,17 @@ import com.revatsai.springbootmall.dto.ProductRequest;
 import com.revatsai.springbootmall.model.Product;
 import com.revatsai.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController // 表controller的bean
 public class ProductController {
 
@@ -20,20 +24,27 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products") // 篩選特定商品分類
-    public ResponseEntity<List<Product>> getProducts( // 表示從url路徑中取得的參數
+    // 表示從url路徑中取得的參數
+    public ResponseEntity<List<Product>> getProducts(
             // 查詢條件 filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
 
             // 排序, default從最新到最舊
             @RequestParam(defaultValue = "created_date") String orderBy, // 根據什麼欄位去排序
-            @RequestParam(defaultValue = "desc") String sort // 使用升序或是降序去排序
+            @RequestParam(defaultValue = "desc") String sort, // 使用升序或是降序去排序
+
+            // 分頁
+            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit, // 要取得幾筆數據
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset // 要跳過多少筆數據
             ) {
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
         productQueryParams.setSearch(search);
         productQueryParams.setOrderBy(orderBy);
         productQueryParams.setSort(sort);
+        productQueryParams.setLimit(limit);
+        productQueryParams.setOffset(offset);
 
         List<Product> productList = productService.getProducts(productQueryParams);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
