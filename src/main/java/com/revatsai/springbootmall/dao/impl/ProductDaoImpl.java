@@ -30,15 +30,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>(); // 創建空的map
 
         // 查詢條件
-        if (productQueryParams.getCategory() != null) {
-            sql += " AND category = :category"; // AND前留空白
-            map.put("category", productQueryParams.getCategory().name());
-        } // category是Enum類型，要使用name方法，Enum -> String
-
-        if (productQueryParams.getSearch() != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 這樣子LIKE的模糊查詢才會生效
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class); // 將count值轉換成是一個Integer類型的返回值
 
@@ -54,15 +46,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>(); // 創建空的map
 
         // 查詢條件
-        if (productQueryParams.getCategory() != null) {
-            sql += " AND category = :category"; // AND前留空白
-            map.put("category", productQueryParams.getCategory().name());
-        } // category是Enum類型，要使用name方法，Enum -> String
-
-        if (productQueryParams.getSearch() != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 這樣子LIKE的模糊查詢才會生效
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // 排序
         sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
@@ -151,5 +135,21 @@ public class ProductDaoImpl implements ProductDao {
         map.put("productId", productId);
 
         namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+
+        // 查詢條件
+        if (productQueryParams.getCategory() != null) {
+            sql += " AND category = :category"; // AND前留空白
+            map.put("category", productQueryParams.getCategory().name());
+        } // category是Enum類型，要使用name方法，Enum -> String
+
+        if (productQueryParams.getSearch() != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 這樣子LIKE的模糊查詢才會生效
+        }
+
+        return sql;
     }
 }
