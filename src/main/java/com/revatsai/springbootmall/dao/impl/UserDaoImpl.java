@@ -5,7 +5,6 @@ import com.revatsai.springbootmall.dto.UserRegisterRequest;
 import com.revatsai.springbootmall.model.User;
 import com.revatsai.springbootmall.rowmapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -41,7 +40,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByEmail(String email) {
-        String sql = "SELECT user_id,email, password, created_date, last_modified_date " +
+        String sql = "SELECT user_id, email, password, created_date, last_modified_date " +
                 "FROM user WHERE email = :email";
 
         Map<String, Object> map = new HashMap<>();

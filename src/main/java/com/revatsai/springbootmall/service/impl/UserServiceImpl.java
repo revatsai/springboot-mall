@@ -1,6 +1,7 @@
 package com.revatsai.springbootmall.service.impl;
 
 import com.revatsai.springbootmall.dao.UserDao;
+import com.revatsai.springbootmall.dto.UserLoginRequest;
 import com.revatsai.springbootmall.dto.UserRegisterRequest;
 import com.revatsai.springbootmall.model.User;
 import com.revatsai.springbootmall.service.UserService;
@@ -31,11 +32,28 @@ public class UserServiceImpl implements UserService {
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
         if (user != null) { // 代表email已註冊過帳號
-            log.warn("該 email： {} 已經被註冊", userRegisterRequest.getEmail());
+            log.warn("該 email {} 已經被註冊", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         // 創建帳號
         return userDao.createUser(userRegisterRequest);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if (user == null) {
+            log.warn("該 email {} 尚未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST); // 強制停止這次前端請求，Spring Boot回傳400狀態碼給前端，表示前端請求參數有問題
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            log.warn("email {} 的密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
