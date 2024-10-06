@@ -4,6 +4,7 @@ import com.revatsai.springbootmall.dao.OrderDao;
 import com.revatsai.springbootmall.dao.ProductDao;
 import com.revatsai.springbootmall.dto.BuyItem;
 import com.revatsai.springbootmall.dto.CreateOrderRequest;
+import com.revatsai.springbootmall.model.Order;
 import com.revatsai.springbootmall.model.OrderItem;
 import com.revatsai.springbootmall.model.Product;
 import com.revatsai.springbootmall.service.OrderService;
@@ -22,6 +23,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        Order order = orderDao.getOrderById(orderId);
+
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+
+        order.setOrderItemList(orderItemList);
+
+        return order;
+    }
 
     @Transactional // 修改多張資料庫table要加上此註解
     @Override
